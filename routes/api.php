@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,9 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
-  Route::get('/books', [BookController::class, 'index']);
-  Route::get('/books/{id}', [BookController::class, 'show']);
-  Route::post('/books', [BookController::class, 'store']);
-  Route::put('/books/{id}', [BookController::class, 'update']);
-  Route::delete('/books/{id}', [BookController::class, 'destroy']);
+  Route::get('/books', [BookApiController::class, 'index']);
+  Route::get('/books/{id}', [BookApiController::class, 'show']);
+  Route::put('/books/{id}', [BookApiController::class, 'update']);
 });

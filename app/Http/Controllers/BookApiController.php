@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\BookClub;
 use Illuminate\Http\Request;
 
-class BookController extends Controller
+class BookApiController extends Controller
 {
   /**
    * Display a listing of the resource.
@@ -14,25 +15,14 @@ class BookController extends Controller
    */
   public function index()
   {
-    return Book::all();
-  }
+    $bookClubId = auth()->user()->book_club_id;
+    $bookClubUserIds = BookClub::find($bookClubId)->users->map(function($item){
+      return $item->id;
+    });
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function store(Request $request)
-  {
-    $request->validate([
-      'title' => 'required|unique:books',
-      'author' => 'required|unique:books',
-      'release_date' => 'required'
-    ]);
-
-    return Book::create($request->all());
-  }
+    // Only return the books of the users from our book club
+    return Book::whereIn('user_id', $bookClubUserIds)->get();
+  }  
 
   /**
    * Display the specified resource.
@@ -58,16 +48,5 @@ class BookController extends Controller
     $book->update($request->all());
 
     return $book;
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function destroy($id)
-  {
-    return Book::destroy($id);
   }
 }

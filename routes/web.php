@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookClubController;
+use App\Http\Controllers\BookWebController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +17,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+  $books = auth()->user()->books;
+
+  return view('dashboard')->with('books', $books);
 })->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+Route::get('/add-book', function () {
+  return view('add-book');
+})->middleware(['auth'])->name('add-book');
+
+Route::post('book_clubs', [BookClubController::class, 'store']);
+Route::post('books', [BookWebController::class, 'store']);
+Route::delete('books/{id}', [BookWebController::class, 'destroy']);
+
+require __DIR__ . '/auth.php';
